@@ -11,18 +11,23 @@ rm -rf sing-box
 git clone --depth=1 https://github.com/SagerNet/sing-box.git
 cd sing-box/experimental/libbox
 
-echo "🔧 初始化 go.mod & 依赖..."
+echo "🔧 初始化 go.mod & 拉取依赖..."
+go mod init github.com/sagernet/libbox
 go mod tidy
-go get golang.org/x/mobile/bind
 
-echo "⚙️ 使用 gomobile 构建各平台版本（生成 .framework 文件夹）..."
-gomobile bind -tags with_utls -target=ios/arm64 -o libbox_ios_arm64
-gomobile bind -tags with_utls -target=iossimulator/arm64 -o libbox_iossim_arm64
-gomobile bind -tags with_utls -target=macos/arm64 -o libbox_macos_arm64
+echo "⚙️ 构建各平台 .framework（非 .xcframework）..."
 
-echo "📦 打包为 zip..."
-zip -r libbox_ios_arm64.zip libbox_ios_arm64.framework
-zip -r libbox_iossim_arm64.zip libbox_iossim_arm64.framework
-zip -r libbox_macos_arm64.zip libbox_macos_arm64.framework
+# ✅ 生成 ios 真机版本
+gomobile bind -tags with_utls -target=ios/arm64 -o libbox_ios_arm64.framework .
 
-echo "✅ 完成构建并打包"
+# ✅ 生成 iOS 模拟器版本
+gomobile bind -tags with_utls -target=iossimulator/arm64 -o libbox_iossim_arm64.framework .
+
+# ✅ 生成 macOS Apple Silicon 版本
+gomobile bind -tags with_utls -target=macos/arm64 -o libbox_macos_arm64.framework .
+
+echo "📦 打包产物..."
+cd ..
+zip -r libbox_artifacts.zip libbox/*.framework
+
+echo "✅ 构建完成，产物位置：sing-box/experimental/libbox/*.framework 和 libbox_artifacts.zip"
