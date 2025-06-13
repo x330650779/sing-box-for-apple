@@ -16,11 +16,11 @@ go mod tidy
 go get golang.org/x/mobile/bind
 
 echo "⚙️ 使用 gomobile 构建各平台版本（生成 .framework 文件夹）..."
-gomobile bind -tags with_utls -target=ios/arm64 -o libbox_ios_arm64.framework .
-gomobile bind -tags with_utls -target=iossimulator/arm64 -o libbox_iossim_arm64.framework .
-gomobile bind -tags with_utls -target=macos/arm64 -o libbox_macos_arm64.framework .
+gomobile bind -tags with_utls -target=ios/arm64 -o libbox_ios_arm64 .
+gomobile bind -tags with_utls -target=iossimulator/arm64 -o libbox_iossim_arm64 .
+gomobile bind -tags with_utls -target=macos/arm64 -o libbox_macos_arm64 .
 
-echo "📦 手动产出完成，请从以下路径取出 .framework："
-echo " - sing-box/experimental/libbox/libbox_ios_arm64.framework"
-echo " - sing-box/experimental/libbox/libbox_iossim_arm64.framework"
-echo " - sing-box/experimental/libbox/libbox_macos_arm64.framework"
+echo "✅ 编译完成，输出目录如下："
+echo " - libbox_ios_arm64.framework"
+echo " - libbox_iossim_arm64.framework"
+echo " - libbox_macos_arm64.framework"
