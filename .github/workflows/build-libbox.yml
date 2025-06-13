@@ -14,22 +14,28 @@ jobs:
         with:
           go-version: '1.21'
 
-      - name: Install gomobile and xcframework tools
+      - name: Install gomobile
         run: |
           go install golang.org/x/mobile/cmd/gomobile@latest
+          export PATH="$PATH:$(go env GOPATH)/bin"
           gomobile init
-          brew install xcframework || true
 
-      - name: Build libbox with uTLS
+      - name: Clone sing-box source
         run: |
-          git clone https://github.com/SagerNet/sing-box.git sing-box
+          git clone --depth=1 https://github.com/SagerNet/sing-box.git
+
+      - name: Build Libbox with uTLS
+        run: |
           cd sing-box/experimental/libbox
           go mod tidy
-          go build -tags with_utls,with_gvisor,with_quic,with_wireguard,with_ech -buildmode=c-archive -o libbox-macos.a .
-          gomobile bind -target=ios,macos -o libbox.framework .
+          export PATH="$PATH:$(go env GOPATH)/bin"
+          gomobile bind -tags with_utls -target=ios,macos -o libbox.framework .
+
+      - name: Create XCFramework
+        run: |
           xcodebuild -create-xcframework -framework libbox.framework -output Libbox.xcframework
 
-      - name: Package artifact
+      - name: Zip artifact
         run: zip -r Libbox.xcframework.zip Libbox.xcframework
 
       - uses: actions/upload-artifact@v4
