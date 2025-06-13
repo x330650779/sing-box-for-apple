@@ -31,10 +31,6 @@ jobs:
           export PATH="$PATH:$(go env GOPATH)/bin"
           gomobile bind -tags with_utls -target=ios,macos -o libbox.framework .
 
-      - name: Create XCFramework
-        run: |
-          xcodebuild -create-xcframework -framework libbox.framework -output Libbox.xcframework
-
       - name: Zip artifact
         run: zip -r Libbox.xcframework.zip Libbox.xcframework
 
