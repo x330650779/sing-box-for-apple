@@ -1,0 +1,38 @@
+name: Build Libbox.xcframework
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-libbox:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Install gomobile and xcframework tools
+        run: |
+          go install golang.org/x/mobile/cmd/gomobile@latest
+          gomobile init
+          brew install xcframework || true
+
+      - name: Build libbox with uTLS
+        run: |
+          git clone https://github.com/SagerNet/sing-box.git sing-box
+          cd sing-box/experimental/libbox
+          go mod tidy
+          go build -tags with_utls,with_gvisor,with_quic,with_wireguard,with_ech -buildmode=c-archive -o libbox-macos.a .
+          gomobile bind -target=ios,macos -o libbox.framework .
+          xcodebuild -create-xcframework -framework libbox.framework -output Libbox.xcframework
+
+      - name: Package artifact
+        run: zip -r Libbox.xcframework.zip Libbox.xcframework
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Libbox.xcframework
+          path: Libbox.xcframework.zip
