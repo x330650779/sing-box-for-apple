@@ -15,7 +15,14 @@ echo "🔧 初始化 go.mod & 依赖..."
 go mod tidy
 go get golang.org/x/mobile/bind
 
-echo "⚙️ 使用 gomobile 构建各平台版本..."
-gomobile bind -tags with_utls -target=ios/arm64 -o libbox_ios_arm64.xcframework .
-gomobile bind -tags with_utls -target=iossimulator/arm64 -o libbox_iossim_arm64.xcframework .
-gomobile bind -tags with_utls -target=macos/arm64 -o libbox_macos_arm64.xcframework .
+echo "⚙️ 使用 gomobile 构建各平台版本（生成 .framework 文件夹）..."
+gomobile bind -tags with_utls -target=ios/arm64 -o libbox_ios_arm64
+gomobile bind -tags with_utls -target=iossimulator/arm64 -o libbox_iossim_arm64
+gomobile bind -tags with_utls -target=macos/arm64 -o libbox_macos_arm64
+
+echo "📦 打包为 zip..."
+zip -r libbox_ios_arm64.zip libbox_ios_arm64.framework
+zip -r libbox_iossim_arm64.zip libbox_iossim_arm64.framework
+zip -r libbox_macos_arm64.zip libbox_macos_arm64.framework
+
+echo "✅ 完成构建并打包"
