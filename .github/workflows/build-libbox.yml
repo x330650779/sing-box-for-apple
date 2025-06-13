@@ -1,22 +1,27 @@
-name: Build Libbox.xcframework
+name: Build Libbox Frameworks
 
 on:
   workflow_dispatch:
 
 jobs:
-  build-libbox:
+  build:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: '1.22'
 
-      - name: Clone sing-box
-        run: git clone --depth=1 https://github.com/SagerNet/sing-box.git
-
-      - name: Run build script
+      - name: Run build-libbox.sh
         run: |
-          bash build-libbox.sh
+          chmod +x build-libbox.sh
+          ./build-libbox.sh
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: LibboxFrameworks
+          path: sing-box/experimental/libbox/libbox_artifacts.zip
