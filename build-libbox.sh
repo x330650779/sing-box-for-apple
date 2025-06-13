@@ -6,24 +6,20 @@ go install golang.org/x/mobile/cmd/gomobile@latest
 export PATH="$PATH:$(go env GOPATH)/bin"
 gomobile init
 
-echo "📦 克隆 sing-box 并进入 libbox 模块目录..."
+echo "📦 克隆 sing-box 并初始化模块..."
 rm -rf sing-box
 git clone --depth=1 https://github.com/SagerNet/sing-box.git
-cd sing-box/experimental/libbox
+cd sing-box
 
-echo "🔧 初始化 go.mod & 拉取依赖..."
-go mod init github.com/sagernet/libbox
+echo "🔧 拉取依赖（使用 sing-box 主仓的 go.mod）..."
 go mod tidy
 
+echo "📦 进入 libbox 模块目录..."
+cd experimental/libbox
+
 echo "⚙️ 构建各平台 .framework（非 .xcframework）..."
-
-# ✅ 生成 ios 真机版本
 gomobile bind -tags with_utls -target=ios/arm64 -o libbox_ios_arm64.framework .
-
-# ✅ 生成 iOS 模拟器版本
 gomobile bind -tags with_utls -target=iossimulator/arm64 -o libbox_iossim_arm64.framework .
-
-# ✅ 生成 macOS Apple Silicon 版本
 gomobile bind -tags with_utls -target=macos/arm64 -o libbox_macos_arm64.framework .
 
 echo "📦 打包产物..."
