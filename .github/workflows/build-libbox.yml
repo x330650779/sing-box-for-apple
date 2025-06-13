@@ -24,12 +24,12 @@ jobs:
         run: |
           git clone --depth=1 https://github.com/SagerNet/sing-box.git
 
-      - name: Build Libbox with uTLS
+      - name: Build Libbox.xcframework with uTLS
         run: |
           cd sing-box/experimental/libbox
           go mod tidy
           export PATH="$PATH:$(go env GOPATH)/bin"
-          gomobile bind -tags with_utls -target=ios,macos -o libbox.framework .
+          gomobile bind -tags with_utls -target=ios,macos -static -o Libbox.xcframework .
 
       - name: Zip artifact
         run: zip -r Libbox.xcframework.zip Libbox.xcframework
