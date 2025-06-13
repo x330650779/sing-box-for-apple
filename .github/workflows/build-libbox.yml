@@ -32,7 +32,7 @@ jobs:
       - name: Package artifact
         run: zip -r Libbox.xcframework.zip Libbox.xcframework
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Libbox.xcframework
           path: Libbox.xcframework.zip
