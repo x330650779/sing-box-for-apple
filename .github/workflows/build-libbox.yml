@@ -20,16 +20,25 @@ jobs:
           export PATH="$PATH:$(go env GOPATH)/bin"
           gomobile init
 
-      - name: Clone sing-box source
+      - name: Clone sing-box
         run: |
           git clone --depth=1 https://github.com/SagerNet/sing-box.git
 
-      - name: Build Libbox.xcframework with uTLS
+      - name: Build frameworks
         run: |
+          export PATH="$PATH:$(go env GOPATH)/bin"
           cd sing-box/experimental/libbox
           go mod tidy
-          export PATH="$PATH:$(go env GOPATH)/bin"
-          gomobile bind -tags with_utls -target=ios,macos -static -o Libbox.xcframework .
+
+          gomobile bind -tags with_utls -target=ios/arm64 -o libbox_ios_arm64.framework .
+          gomobile bind -tags with_utls -target=iossimulator/arm64 -o libbox_iossim_arm64.framework .
+          gomobile bind -tags with_utls -target=macos/arm64 -o libbox_macos_arm64.framework .
+
+          xcodebuild -create-xcframework \
+            -framework libbox_ios_arm64.framework \
+            -framework libbox_iossim_arm64.framework \
+            -framework libbox_macos_arm64.framework \
+            -output Libbox.xcframework
 
       - name: Zip artifact
         run: zip -r Libbox.xcframework.zip Libbox.xcframework
